@@ -15,12 +15,12 @@ public interface Exclude {
             "should", "does", "being", " doing", "having", "making", "need",
             "dont", "cant", "didnt", "wasnt", "wont", "havent", "hasnt",
 
-            "which", "what", "that", "there", "this", "these", "when", "then", "those", "such",
+            "which", "what", "that", "there", "this", "these", "when", "then", "those", "such", "where", "here",
 
-            "you", "he", "she", "it", "they", "we", "us", "himself", "herself", "itself",
+            "you", "he", "she", "it", "they", "we", "us", "himself", "herself", "itself", "them", "him",
             "your", "her", "his", "my", "mine", "their",
 
-            "more", "less", "most", "some",
+            "more", "less", "most", "some", "many", "only", "just",
             "also", "because", "other",
 
             "twitter", "tweet", "instagram", "youtube", "retweeted", "retweet", "share"

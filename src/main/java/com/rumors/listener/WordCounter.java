@@ -1,5 +1,8 @@
 package com.rumors.listener;
 
+import com.rumors.Measure;
+import io.micrometer.core.instrument.LongTaskTimer;
+
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -17,6 +20,7 @@ public class WordCounter {
     }
 
     Map<String, Integer> countWords(String text, String customExclude) {
+        LongTaskTimer.Sample timer = Measure.startTimer("countArticle");
         Set<String> cleaned = Arrays.stream(customExclude.split(SPACE))
                 .map(this::cleanWord)
                 .collect(Collectors.toSet());
@@ -26,6 +30,7 @@ public class WordCounter {
                 .map(this::cleanWord)
                 .filter(word -> shouldBeCounted(word, cleaned))
                 .forEach(word -> count.merge(word, 1, Integer::sum));
+        timer.stop();
         return count;
     }
 

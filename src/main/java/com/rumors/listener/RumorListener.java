@@ -1,7 +1,9 @@
 package com.rumors.listener;
 
+import com.rumors.Measure;
 import com.rumors.search.SearchEngine;
 import com.rumors.search.WebPageReader;
+import io.micrometer.core.instrument.LongTaskTimer;
 
 import java.util.*;
 
@@ -23,17 +25,19 @@ public class RumorListener {
     }
 
     public LinkedHashMap<String, Integer> listenToRumors(String topic) {
+        LongTaskTimer.Sample timer = Measure.startTimer("rumor");
+
         Map<String, Integer> totalCount = new HashMap<>();
-
         Set<String> links = engine.getLinksFor(topic);
-
         for (String url : links) {
             String article = removeTextBeforeArticle(pageReader.read(url));
             Map<String, Integer> count = counter.countWords(article, topic);
             add(count, totalCount);
         }
+        LinkedHashMap<String, Integer> rumors = collectTopRumors(totalCount);
 
-        return collectTopRumors(totalCount);
+        timer.stop();
+        return rumors;
     }
 
     private LinkedHashMap<String, Integer> collectTopRumors(Map<String, Integer> totalCount) {

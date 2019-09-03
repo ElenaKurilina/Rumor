@@ -13,14 +13,20 @@ import java.util.LinkedHashMap;
 
 public class ConsoleClient {
 
+    private static final String EXIT = "exit";
+
     public static void main(String[] args) {
         WordCounter counter = new WordCounter(Exclude.words, 3);
         RumorListener rumorListener = new RumorListener(new DuckDuckGo(), new WebPageReader(), counter, 20);
+        System.out.println("Type \'exit\' to exit the app.");
 
-        String topic = askForTopic();
+        while (true) {
+            String input = askForTopic();
+            quitIfRequired(input);
 
-        LinkedHashMap<String, Integer> rumors = rumorListener.listenToRumors(topic);
-        rumors.forEach((word, count) -> System.out.println(count + " " + word));
+            LinkedHashMap<String, Integer> rumors = rumorListener.listenToRumors(input);
+            rumors.forEach((word, count) -> System.out.println(count + " " + word));
+        }
     }
 
     private static String askForTopic() {
@@ -30,6 +36,13 @@ public class ConsoleClient {
             return reader.readLine();
         } catch (IOException e) {
             return "";
+        }
+    }
+
+    private static void quitIfRequired(String input) {
+        String command = input.toLowerCase();
+        if (EXIT.equals(command)) {
+            System.exit(0);
         }
     }
 }
