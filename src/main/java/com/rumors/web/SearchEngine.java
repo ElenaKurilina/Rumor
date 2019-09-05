@@ -1,4 +1,4 @@
-package com.rumors.search;
+package com.rumors.web;
 
 import java.util.Set;
 

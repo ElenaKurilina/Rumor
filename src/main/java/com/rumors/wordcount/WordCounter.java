@@ -1,9 +1,12 @@
-package com.rumors.listener;
+package com.rumors.wordcount;
 
 import com.rumors.Measure;
 import io.micrometer.core.instrument.LongTaskTimer;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -19,17 +22,18 @@ public class WordCounter {
         this.minWordLength = minWordLength;
     }
 
-    Map<String, Integer> countWords(String text, String customExclude) {
+    public Map<String, Integer> countWords(String text, String customExclude) {
         LongTaskTimer.Sample timer = Measure.startTimer("countArticle");
+
         Set<String> cleaned = Arrays.stream(customExclude.split(SPACE))
                 .map(this::cleanWord)
                 .collect(Collectors.toSet());
-
         Map<String, Integer> count = new HashMap<>();
         Arrays.stream(text.split(SPACE))
                 .map(this::cleanWord)
                 .filter(word -> shouldBeCounted(word, cleaned))
                 .forEach(word -> count.merge(word, 1, Integer::sum));
+
         timer.stop();
         return count;
     }

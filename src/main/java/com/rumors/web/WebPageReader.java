@@ -1,14 +1,13 @@
-package com.rumors.search;
+package com.rumors.web;
 
 import com.rumors.Measure;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.LongTaskTimer;
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-
-import org.apache.log4j.Logger;
 
 public class WebPageReader {
 
@@ -22,7 +21,7 @@ public class WebPageReader {
         try {
             article = Jsoup.connect(url).get();
         } catch (IOException e) {
-            logger.warn("Couldn't read page: " + url, e);
+            logger.warn("Couldn't read page: " + url + e.getMessage());
             pageReadFail.increment();
             return "";
         }

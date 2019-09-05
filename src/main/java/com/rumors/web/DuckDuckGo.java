@@ -1,4 +1,4 @@
-package com.rumors.search;
+package com.rumors.web;
 
 import com.rumors.Measure;
 import io.micrometer.core.instrument.Counter;
@@ -36,9 +36,12 @@ public class DuckDuckGo implements SearchEngine {
             failCounter.increment();
             return Collections.emptySet();
         }
-        Elements results = pageWithSearchResults
-                .getElementById(LINKS)
-                .getElementsByClass(RESULTS_LINKS);
+        Element links = pageWithSearchResults.getElementById(LINKS);
+        if (links == null) {
+            return Collections.emptySet();
+        }
+
+        Elements results = links.getElementsByClass(RESULTS_LINKS);
 
         Set<String> searchResult = results.stream()
                 .map(this::extractUrl)
