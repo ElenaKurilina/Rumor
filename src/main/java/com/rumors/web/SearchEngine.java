@@ -4,5 +4,5 @@ import java.util.Set;
 
 public interface SearchEngine {
 
-    Set<String> getLinksFor(String query);
+    Set<String> findLinksFor(String query);
 }

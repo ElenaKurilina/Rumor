@@ -4,47 +4,52 @@ import com.rumors.Measure;
 import com.rumors.web.SearchEngine;
 import com.rumors.web.WebPageReader;
 import com.rumors.wordcount.MapAdder;
-import com.rumors.wordcount.TopCollector;
 import com.rumors.wordcount.WordCounter;
 import io.micrometer.core.instrument.LongTaskTimer;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
-public class RumorListener {
+public class SingleThreadListener implements Listener {
 
-    private final SearchEngine engine;
+    private final SearchEngine searchEngine;
     private final WebPageReader pageReader;
     private final WordCounter counter;
     private final MapAdder mapAdder;
 
-    private final int top;
-
-    public RumorListener(SearchEngine engine, WebPageReader pageReader, WordCounter counter, MapAdder mapAdder, int top) {
-        this.engine = engine;
+    public SingleThreadListener(SearchEngine searchEngine, WebPageReader pageReader, WordCounter counter, MapAdder mapAdder) {
+        this.searchEngine = searchEngine;
         this.pageReader = pageReader;
         this.counter = counter;
         this.mapAdder = mapAdder;
-        this.top = top;
     }
 
-    public LinkedHashMap<String, Integer> listenToRumors(String topic) {
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void stop() {
+
+    }
+
+    @Override
+    public void listenToRumors(String topic, Function<Map<String, Integer>, Void> callback) {
         LongTaskTimer.Sample timer = Measure.startTimer("rumor");
 
         Map<String, Integer> totalCount = new HashMap<>();
-        Set<String> links = engine.getLinksFor(topic);
-        for (String url : links) {
-            String text = pageReader.read(url);
+        Set<String> links = searchEngine.findLinksFor(topic);
+        for (String link : links) {
+            String text = pageReader.read(link);
             String article = removeTextBeforeArticle(text);
             Map<String, Integer> count = counter.countWords(article, topic);
             mapAdder.add(count, totalCount);
         }
-        LinkedHashMap<String, Integer> rumors = TopCollector.collectOrderedTop(totalCount, top);
-
         timer.stop();
-        return rumors;
+        callback.apply(totalCount);
     }
 
     private static String removeTextBeforeArticle(String text) {

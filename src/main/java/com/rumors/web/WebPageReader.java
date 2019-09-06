@@ -14,14 +14,18 @@ public class WebPageReader {
     private final static Logger logger = Logger.getLogger(WebPageReader.class);
 
     public String read(String url) {
+        if (url.isEmpty()) {
+            return "";
+        }
         LongTaskTimer.Sample timer = Measure.startTimer("pageRead");
 
         Counter pageReadFail = Measure.meterRegistry.counter("pageReadFail");
         Document article;
         try {
+            logger.debug("Reading URL: " + url);
             article = Jsoup.connect(url).get();
         } catch (IOException e) {
-            logger.warn("Couldn't read page: " + url + e.getMessage());
+            logger.warn("Couldn't read page: " + url + " Error: " + e.getMessage());
             pageReadFail.increment();
             return "";
         }

@@ -23,6 +23,6 @@ public interface Exclude {
             "more", "less", "most", "some", "many", "only", "just",
             "also", "because", "other",
 
-            "twitter", "tweet", "instagram", "youtube", "retweeted", "retweet", "share"
+            "twitter", "tweet", "instagram", "youtube", "retweeted", "retweet", "share", "tweets"
     );
 }

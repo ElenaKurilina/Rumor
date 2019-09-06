@@ -22,10 +22,6 @@ class ConsoleActions {
         }
     }
 
-    void quitIfRequired(String input) {
-        quitIfRequired(input, null);
-    }
-
     void quitIfRequired(String input, Runnable beforeQuit) {
         String command = input.toLowerCase();
         if (EXIT.equals(command)) {

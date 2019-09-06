@@ -16,16 +16,16 @@ import java.util.stream.Collectors;
 
 public class DuckDuckGo implements SearchEngine {
 
+    private final Logger logger = Logger.getLogger(SearchEngine.class);
     private static final String LINKS_MAIN = "links_main";
     private static final String A = "a";
     private static final String HREF = "href";
     private static final String LINKS = "links";
     private static final String RESULTS_LINKS = "results_links";
-    private final Logger logger = Logger.getLogger(SearchEngine.class);
     private final static String DUCKDUCKGO_SEARCH_URL = "https://duckduckgo.com/html/?q=";
 
     @Override
-    public Set<String> getLinksFor(String query) {
+    public Set<String> findLinksFor(String query) {
         Document pageWithSearchResults;
         Counter failCounter = Measure.meterRegistry.counter("duckFail");
         LongTaskTimer.Sample timer = Measure.startTimer("duckSearch");

@@ -23,7 +23,7 @@ public class ArticleReaderActor extends AbstractActor {
         return receiveBuilder()
                 .match(Read.class, read -> {
                     String article = pageReader.read(read.url);
-                    counter.tell(new WordCounterActor.Article(article, read.topic), getSender());
+                    counter.tell(new WordCounterActor.Count(article, read.topic), getSender());
                 })
                 .build();
     }

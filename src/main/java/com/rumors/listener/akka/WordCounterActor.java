@@ -23,18 +23,18 @@ public class WordCounterActor extends AbstractActor {
 
     public Receive createReceive() {
         return receiveBuilder()
-                .match(Article.class, article -> {
+                .match(Count.class, article -> {
                     Map<String, Integer> count = counter.countWords(article.text, article.topic);
                     countReducer.tell(new MapAdderActor.Add(count, article.topic), ActorRef.noSender());
                 })
                 .build();
     }
 
-    static class Article {
+    static class Count {
         final String text;
         final String topic;
 
-        Article(String text, String topic) {
+        Count(String text, String topic) {
             this.text = text;
             this.topic = topic;
         }

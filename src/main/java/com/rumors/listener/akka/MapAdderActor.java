@@ -5,19 +5,18 @@ import akka.actor.Props;
 import com.rumors.wordcount.MapAdder;
 import com.rumors.wordcount.TopCollector;
 
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class MapAdderActor extends AbstractActor {
 
     private final MapAdder adder;
-    private final TopCollector topCollector;
     private final Map<String, Map<String, Integer>> totals = new HashMap<>();
 
     MapAdderActor(MapAdder adder, TopCollector topCollector) {
         this.adder = adder;
-        this.topCollector = topCollector;
     }
 
     static Props props(MapAdder adder, TopCollector topCollector) {
@@ -34,25 +33,18 @@ public class MapAdderActor extends AbstractActor {
                         totals.put(add.topic, add.count);
                     }
                 })
-                .match(Print.class, total -> {
-                    if (totals.containsKey(total.topic)) {
-                        LinkedHashMap<String, Integer> top = TopCollector.collectOrderedTop(totals.get(total.topic), total.top);
-                        System.out.println("Result for " + total.topic);
-                        System.out.println(top.toString());
-                    } else {
-                        System.out.println("Listening...");
-                    }
+                .match(Execute.class, command -> {
+                    command.function.apply(totals.getOrDefault(command.topic, Collections.emptyMap()));
                 }).build();
     }
 
-    static class Print {
+    static class Execute {
+        final Function<Map<String, Integer>, Void> function;
         final String topic;
-        final int top;
 
-
-        Print(String topic, int top) {
+        Execute(Function<Map<String, Integer>, Void> function, String topic) {
+            this.function = function;
             this.topic = topic;
-            this.top = top;
         }
     }
 
